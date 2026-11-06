@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Painel · Lista VIP · Santorini</title>
+  <link rel="icon" href="../assets/emblem.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --night:#0A1A2C; --panel:#102640; --line:rgba(244,236,221,.14); --sand:#F4ECDD; --dim:rgba(244,236,221,.65); --gold:#D4AE6A; --danger:#F08A7E; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--night); color:var(--sand); font-family:"Jost",system-ui,sans-serif; }
+    .wrap { max-width:1100px; margin:0 auto; padding:24px 16px 60px; }
+    h1 { font-family:"Cormorant Garamond",serif; font-size:2rem; margin:0; }
+    h1 small { display:block; font-family:"Jost",sans-serif; font-size:.75rem; letter-spacing:.3em; text-transform:uppercase; color:var(--gold); }
+    header { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
+    .tabs { display:flex; gap:6px; }
+    button, .btn { font:inherit; cursor:pointer; border-radius:999px; padding:9px 16px; border:1px solid var(--line); background:transparent; color:var(--sand); }
+    button.on { background:var(--gold); color:var(--night); border-color:var(--gold); font-weight:600; }
+    .gold { border-color:var(--gold); color:var(--gold); }
+    .login { max-width:360px; margin:12vh auto; text-align:center; }
+    .login input { width:100%; padding:14px; margin:18px 0 10px; border-radius:12px; border:1px solid var(--line); background:#07131F; color:var(--sand); font:inherit; }
+    .login button { width:100%; background:var(--gold); color:var(--night); font-weight:600; border:0; padding:14px; }
+    .err { color:var(--danger); min-height:1.2em; }
+    .weeks { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:18px; }
+    .weeks button { white-space:nowrap; border-radius:14px; text-align:left; }
+    .weeks button b { display:block; font-size:1rem; }
+    .weeks button span { font-size:.75rem; opacity:.8; }
+    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-bottom:16px; }
+    .stat { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px 16px; }
+    .stat b { display:block; font-family:"Cormorant Garamond",serif; font-size:2rem; line-height:1; color:var(--gold); }
+    .stat span { font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); }
+    .tools { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+    .tools input { flex:1; min-width:200px; padding:10px 14px; border-radius:999px; border:1px solid var(--line); background:#07131F; color:var(--sand); font:inherit; }
+    .table { overflow-x:auto; border:1px solid var(--line); border-radius:14px; }
+    table { width:100%; border-collapse:collapse; font-size:.9rem; }
+    th, td { padding:10px 12px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap; }
+    th { background:var(--panel); font-weight:500; font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); position:sticky; top:0; }
+    tr.grupo-ini td { border-top:2px solid rgba(212,174,106,.35); }
+    td a { color:var(--sand); }
+    .tag { font-size:.72rem; padding:2px 8px; border-radius:999px; background:rgba(212,174,106,.16); color:var(--gold); }
+    .tag.ac { background:rgba(244,236,221,.1); color:var(--dim); }
+    .empty { padding:30px; text-align:center; color:var(--dim); }
+    @media print {
+      body { background:#fff; color:#000; }
+      header .tabs, .weeks, .tools, .stats { display:none; }
+      th { background:#eee; color:#000; position:static; }
+      th, td { border-color:#ccc; color:#000; }
+      td a { color:#000; text-decoration:none; }
+      .tag { background:none; color:#000; padding:0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="login" id="login">
+      <img src="../assets/emblem.svg" width="72" height="72" alt="">
+      <h1><small>Santorini</small>Painel da Lista VIP</h1>
+      <form id="loginForm">
+        <input type="password" id="senha" placeholder="Senha do painel" autocomplete="current-password" required>
+        <button type="submit">Entrar</button>
+        <p class="err" id="loginErr"></p>
+      </form>
+    </section>
+
+    <section id="app" hidden>
+      <header>
+        <h1><small>Quinta das Patroas</small><span id="titulo">Lista VIP</span></h1>
+        <div class="tabs">
+          <button class="on" data-tab="lista">Listas por quinta</button>
+          <button data-tab="clientes">Clientes</button>
+          <button id="sair">Sair</button>
+        </div>
+      </header>
+
+      <div id="tabLista">
+        <div class="weeks" id="weeks"></div>
+        <div class="stats" id="stats"></div>
+        <div class="tools">
+          <input type="search" id="busca" placeholder="Buscar nome ou WhatsApp…">
+          <button class="gold" id="csv">Baixar CSV</button>
+          <button class="gold" onclick="window.print()">Imprimir para a portaria</button>
+        </div>
+        <div class="table"><table id="tabela"></table></div>
+      </div>
+
+      <div id="tabClientes" hidden>
+        <div class="stats" id="statsCli"></div>
+        <div class="tools">
+          <input type="search" id="buscaCli" placeholder="Buscar cliente…">
+          <button class="gold" id="csvCli">Baixar CSV</button>
+        </div>
+        <div class="table"><table id="tabelaCli"></table></div>
+      </div>
+    </section>
+  </div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var senha = "";
+  try { senha = sessionStorage.getItem("painelSenha") || ""; } catch (e) {}
+  var semanas = [], pessoas = [], clientes = [], dataAtual = null;
+  var DIAS = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+
+  function api(qs) {
+    return fetch("/api/painel?" + qs, { headers: { "x-painel-senha": senha }, cache: "no-store" })
+      .then(function (r) {
+        if (r.status === 401) throw new Error("senha");
+        return r.json();
+      });
+  }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function br(iso) { var a = iso.split("-"); return a[2] + "/" + a[1] + "/" + a[0]; }
+  function fone(d) { d = String(d || ""); return d.length === 11 ? "(" + d.slice(0, 2) + ") " + d.slice(2, 7) + "-" + d.slice(7) : d; }
+  function zap(d) { return d ? '<a href="https://wa.me/55' + esc(d) + '" target="_blank" rel="noopener">' + esc(fone(d)) + "</a>" : "—"; }
+
+  function entrar() {
+    api("acao=semanas").then(function (r) {
+      try { sessionStorage.setItem("painelSenha", senha); } catch (e) {}
+      $("login").hidden = true; $("app").hidden = false;
+      semanas = r.semanas || [];
+      renderSemanas();
+      if (semanas.length) abrir(semanas[0].data); else $("tabela").innerHTML = '<tr><td class="empty">Nenhum cadastro ainda.</td></tr>';
+    }).catch(function (e) {
+      $("login").hidden = false; $("app").hidden = true;
+      $("loginErr").textContent = e.message === "senha" ? "Senha incorreta." : "Não foi possível carregar. Tente novamente.";
+    });
+  }
+
+  function renderSemanas() {
+    $("weeks").innerHTML = semanas.map(function (s) {
+      return '<button data-d="' + s.data + '"' + (s.data === dataAtual ? ' class="on"' : "") + "><b>Quinta " + br(s.data).slice(0, 5) +
+        "</b><span>" + s.total + " nomes · " + s.titulares + " titulares</span></button>";
+    }).join("");
+  }
+  $("weeks").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) abrir(b.dataset.d); });
+
+  function abrir(data) {
+    dataAtual = data; renderSemanas();
+    $("titulo").textContent = "Lista · quinta " + br(data);
+    $("tabela").innerHTML = '<tr><td class="empty">Carregando…</td></tr>';
+    api("acao=lista&data=" + data).then(function (r) { pessoas = r.pessoas || []; renderLista(); });
+  }
+
+  function renderLista() {
+    var q = $("busca").value.trim().toLowerCase();
+    var tit = pessoas.filter(function (p) { return p.tipo === "Titular"; }).length;
+    var comFone = pessoas.filter(function (p) { return p.whatsapp; }).length;
+    $("stats").innerHTML =
+      '<div class="stat"><b>' + pessoas.length + "</b><span>Nomes na lista</span></div>" +
+      '<div class="stat"><b>' + tit + "</b><span>Titulares</span></div>" +
+      '<div class="stat"><b>' + (pessoas.length - tit) + "</b><span>Acompanhantes</span></div>" +
+      '<div class="stat"><b>' + comFone + "</b><span>Com WhatsApp</span></div>";
+    var vis = pessoas.filter(function (p) { return !q || (p.nome + " " + p.whatsapp + " " + p.titular).toLowerCase().indexOf(q) >= 0; });
+    var ultimoGrupo = null;
+    $("tabela").innerHTML = "<thead><tr><th>#</th><th>Nome</th><th>Tipo</th><th>Titular</th><th>WhatsApp</th><th>Instagram</th><th>Cadastro</th><th>Origem</th></tr></thead><tbody>" +
+      (vis.length ? vis.map(function (p, i) {
+        var ini = p.grupo !== ultimoGrupo; ultimoGrupo = p.grupo;
+        return "<tr" + (ini && i ? ' class="grupo-ini"' : "") + "><td>" + (i + 1) + "</td><td>" + esc(p.nome) + '</td><td><span class="tag' + (p.tipo === "Titular" ? "" : " ac") + '">' + esc(p.tipo) +
+          "</span></td><td>" + esc(p.tipo === "Titular" ? "—" : p.titular) + "</td><td>" + zap(p.whatsapp) + "</td><td>" + esc(p.instagram || "—") + "</td><td>" + esc(p.cadastradoEm) + "</td><td>" + esc(p.origem || "—") + "</td></tr>";
+      }).join("") : '<tr><td colspan="8" class="empty">Nenhum resultado.</td></tr>') + "</tbody>";
+  }
+  $("busca").addEventListener("input", renderLista);
+
+  function carregarClientes() {
+    $("tabelaCli").innerHTML = '<tr><td class="empty">Carregando…</td></tr>';
+    api("acao=clientes").then(function (r) { clientes = r.clientes || []; renderClientes(); });
+  }
+  function renderClientes() {
+    var q = $("buscaCli").value.trim().toLowerCase();
+    var recorrentes = clientes.filter(function (c) { return c.listas > 1; }).length;
+    $("statsCli").innerHTML =
+      '<div class="stat"><b>' + clientes.length + "</b><span>Clientes únicos</span></div>" +
+      '<div class="stat"><b>' + recorrentes + "</b><span>Recorrentes (2+ listas)</span></div>";
+    var vis = clientes.filter(function (c) { return !q || (c.nome + " " + c.whatsapp + " " + c.instagram).toLowerCase().indexOf(q) >= 0; })
+      .sort(function (a, b) { return b.listas - a.listas; });
+    $("tabelaCli").innerHTML = "<thead><tr><th>Nome</th><th>WhatsApp</th><th>Instagram</th><th>Listas</th><th>Titular</th><th>Acomp.</th><th>Primeiro</th><th>Último</th><th>Quintas</th></tr></thead><tbody>" +
+      (vis.length ? vis.map(function (c) {
+        return "<tr><td>" + esc(c.nome) + "</td><td>" + zap(c.whatsapp) + "</td><td>" + esc(c.instagram || "—") + "</td><td>" + c.listas + "</td><td>" + c.titular + "</td><td>" + c.acompanhante +
+          "</td><td>" + esc(c.primeiro) + "</td><td>" + esc(c.ultimo) + "</td><td>" + esc(c.quintas) + "</td></tr>";
+      }).join("") : '<tr><td colspan="9" class="empty">Nenhum cliente.</td></tr>') + "</tbody>";
+  }
+  $("buscaCli").addEventListener("input", renderClientes);
+
+  function csv(nome, linhas) {
+    var txt = "﻿" + linhas.map(function (l) { return l.map(function (v) { return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"'; }).join(";"); }).join("\r\n");
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([txt], { type: "text/csv;charset=utf-8" }));
+    a.download = nome; a.click();
+  }
+  $("csv").addEventListener("click", function () {
+    csv("lista-quinta-" + dataAtual + ".csv", [["Nome", "Tipo", "Titular", "WhatsApp", "Instagram", "Cadastro", "Origem"]].concat(
+      pessoas.map(function (p) { return [p.nome, p.tipo, p.titular, p.whatsapp, p.instagram, p.cadastradoEm, p.origem]; })));
+  });
+  $("csvCli").addEventListener("click", function () {
+    csv("clientes-santorini.csv", [["Nome", "WhatsApp", "Instagram", "Listas", "Titular", "Acompanhante", "Primeiro", "Último", "Quintas", "Origem"]].concat(
+      clientes.map(function (c) { return [c.nome, c.whatsapp, c.instagram, c.listas, c.titular, c.acompanhante, c.primeiro, c.ultimo, c.quintas, c.origem]; })));
+  });
+
+  document.querySelectorAll("[data-tab]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.querySelectorAll("[data-tab]").forEach(function (x) { x.classList.toggle("on", x === b); });
+      var cli = b.dataset.tab === "clientes";
+      $("tabLista").hidden = cli; $("tabClientes").hidden = !cli;
+      $("titulo").textContent = cli ? "Base de clientes" : (dataAtual ? "Lista · quinta " + br(dataAtual) : "Lista VIP");
+      if (cli && !clientes.length) carregarClientes();
+    });
+  });
+  $("sair").addEventListener("click", function () { try { sessionStorage.removeItem("painelSenha"); } catch (e) {} location.reload(); });
+  $("loginForm").addEventListener("submit", function (e) { e.preventDefault(); senha = $("senha").value; $("loginErr").textContent = ""; entrar(); });
+
+  if (senha) entrar();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Quinta das Patroas · Lista VIP · Santorini</title>
+  <meta name="description" content="Coloque seu nome na Lista VIP da Quinta das Patroas no Santorini – O Mediterrâneo em Meriti. Open de drinks para as 100 primeiras mulheres das 20h às 22h.">
+  <meta name="theme-color" content="#0A1A2C">
+  <meta property="og:title" content="Quinta das Patroas · Lista VIP · Santorini">
+  <meta property="og:description" content="Open de caipirinha, gin tropical e melancita para as 100 primeiras mulheres das 20h às 22h.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/emblem.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="sky" aria-hidden="true"></div>
+
+  <main class="page">
+    <!-- HERO -->
+    <header class="hero">
+      <img class="emblem" src="assets/emblem.svg" alt="Santorini" width="96" height="96">
+      <p class="brand">Santorini</p>
+      <p class="tagline">O Mediterrâneo em Meriti</p>
+
+      <p class="eyebrow">Toda quinta-feira</p>
+      <h1 class="title">Quinta das <em>Patroas</em></h1>
+      <p class="subtitle">Lista VIP</p>
+
+      <div class="status" id="status" data-state="loading" role="status" aria-live="polite">
+        <span class="status-dot"></span>
+        <span class="status-text" id="statusText">Verificando a lista…</span>
+      </div>
+    </header>
+
+    <!-- CARD PRINCIPAL -->
+    <section class="card" aria-labelledby="cardTitle">
+
+      <!-- Lista aberta -->
+      <div class="panel" id="panelOpen" hidden>
+        <h2 class="card-title" id="cardTitle">Coloque seu nome na lista</h2>
+        <p class="card-lead">Válido para <strong id="eventDateOpen">quinta-feira</strong>. Lista fecha <strong>quinta às 19h</strong>.</p>
+
+        <form id="form" novalidate>
+          <label class="field">
+            <span>Nome completo</span>
+            <input type="text" name="nome" id="nome" autocomplete="name" required minlength="5" maxlength="80" placeholder="Como está no seu documento">
+            <small class="error" data-for="nome"></small>
+          </label>
+
+          <label class="field">
+            <span>WhatsApp</span>
+            <input type="tel" name="whatsapp" id="whatsapp" autocomplete="tel-national" inputmode="numeric" required placeholder="(21) 99999-9999">
+            <small class="error" data-for="whatsapp"></small>
+          </label>
+
+          <label class="field">
+            <span>Instagram <i>(opcional)</i></span>
+            <input type="text" name="instagram" id="instagram" autocomplete="off" maxlength="40" placeholder="@seuperfil">
+          </label>
+
+          <fieldset class="field group">
+            <legend>Vai levar acompanhante?</legend>
+            <div class="seg">
+              <label><input type="radio" name="acomp" value="nao" checked><span>Não, vou só</span></label>
+              <label><input type="radio" name="acomp" value="sim"><span>Sim, vou levar</span></label>
+            </div>
+          </fieldset>
+
+          <div class="acomp" id="acompBox" hidden>
+            <div class="stepper-row">
+              <span class="stepper-label">Quantos acompanhantes?</span>
+              <div class="stepper">
+                <button type="button" id="menos" aria-label="Diminuir">−</button>
+                <output id="qtd" aria-live="polite">1</output>
+                <button type="button" id="mais" aria-label="Aumentar">+</button>
+              </div>
+            </div>
+            <p class="hint"><strong>Cada pessoa entra com o próprio nome na lista.</strong> Cadastre o nome completo de cada acompanhante — e, se puder, o WhatsApp de cada uma para a gente confirmar presença. É isso que garante o lugar de todo mundo na porta.</p>
+            <div id="acompList"></div>
+          </div>
+
+          <label class="check">
+            <input type="checkbox" name="maior" id="maior" required>
+            <span>Tenho 18 anos ou mais e vou apresentar documento com foto na entrada.</span>
+          </label>
+          <small class="error" data-for="maior"></small>
+
+          <!-- honeypot anti-robô -->
+          <input type="text" name="empresa" id="empresa" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+
+          <button type="submit" class="btn" id="submitBtn">
+            <span class="btn-label">Quero meu nome na lista</span>
+          </button>
+          <p class="form-msg" id="formMsg" role="alert"></p>
+        </form>
+
+        <p class="countdown-line">Lista fecha em <span class="countdown" id="countdownOpen">--</span></p>
+      </div>
+
+      <!-- Sucesso -->
+      <div class="panel" id="panelSuccess" hidden>
+        <div class="seal" aria-hidden="true">✓</div>
+        <h2 class="card-title">Seu nome está na lista!</h2>
+        <p class="card-lead"><strong id="successName"></strong>, te esperamos na <strong id="eventDateSuccess">quinta-feira</strong>.</p>
+        <div class="names" id="successList" hidden>
+          <p class="names-title">Nomes confirmados</p>
+          <ol id="successNames"></ol>
+        </div>
+        <a class="btn" id="shareBtn" href="#" target="_blank" rel="noopener" hidden>Avisar acompanhantes no WhatsApp</a>
+        <ul class="notes">
+          <li>Apresente <strong>documento oficial com foto</strong> na entrada.</li>
+          <li>Open de drinks para as <strong>100 primeiras mulheres</strong> que chegarem <strong>das 20h às 22h</strong>.</li>
+          <li>Chegue cedo — o benefício acaba quando as 100 primeiras entram.</li>
+        </ul>
+        <a class="btn btn-ghost" id="vipLink" href="#" target="_blank" rel="noopener">Entrar na Comunidade VIP</a>
+      </div>
+
+      <!-- Lista fechada -->
+      <div class="panel" id="panelClosed" hidden>
+        <p class="closed-badge">Lista fechada</p>
+        <h2 class="card-title">A lista desta semana foi encerrada</h2>
+        <p class="card-lead">Volte na <strong>próxima segunda-feira, às 17h</strong>, para colocar seu nome na lista da Quinta das Patroas.</p>
+        <div class="reopen">
+          <span class="reopen-label">Reabre em</span>
+          <span class="countdown countdown-big" id="countdownClosed">--</span>
+          <span class="reopen-date" id="reopenDate"></span>
+        </div>
+        <a class="btn btn-ghost" id="vipLinkClosed" href="#" target="_blank" rel="noopener">Entrar na Comunidade VIP para ser avisado(a)</a>
+      </div>
+    </section>
+
+    <!-- BENEFÍCIO -->
+    <section class="perk" aria-labelledby="perkTitle">
+      <p class="eyebrow">Das 20h às 22h</p>
+      <h2 class="section-title" id="perkTitle">Open para as <em>100 primeiras</em> mulheres</h2>
+      <ul class="drinks">
+        <li><span class="drink-icon" aria-hidden="true">🍋</span><span>Caipirinha de limão</span></li>
+        <li><span class="drink-icon" aria-hidden="true">🍸</span><span>Gin tropical</span></li>
+        <li><span class="drink-icon" aria-hidden="true">🍉</span><span>Melancita</span></li>
+      </ul>
+    </section>
+
+    <!-- INFORMAÇÕES -->
+    <section class="info" aria-label="Informações do evento">
+      <div class="info-item">
+        <span class="info-label">Quando</span>
+        <span class="info-value" id="eventDateInfo">Quinta-feira</span>
+        <span class="info-sub">Benefício das 20h às 22h</span>
+      </div>
+      <a class="info-item" id="mapLink" href="#" target="_blank" rel="noopener">
+        <span class="info-label">Onde</span>
+        <span class="info-value">Santorini Bar &amp; Restaurante</span>
+        <span class="info-sub" id="addressText"></span>
+        <span class="info-cta">Como chegar →</span>
+      </a>
+      <a class="info-item" id="reservaLink" href="#" target="_blank" rel="noopener">
+        <span class="info-label">Lounge &amp; Camarote</span>
+        <span class="info-value">Reserve pelo WhatsApp</span>
+        <span class="info-sub">Atendimento direto com a casa</span>
+        <span class="info-cta">Reservar →</span>
+      </a>
+    </section>
+
+    <footer class="footer">
+      <div class="waves" aria-hidden="true"></div>
+      <p>Drinks · Gastronomia · Música ao vivo</p>
+      <p><a id="igLink" href="#" target="_blank" rel="noopener">@santorini.oficiall</a></p>
+      <p class="fine">Proibida a entrada de menores de 18 anos. Beba com moderação. Lista sujeita à lotação da casa.</p>
+    </footer>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
