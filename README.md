@@ -28,13 +28,14 @@ apps-script/Code.gs     script da planilha do Google
 ## Configuração passo a passo
 
 ### 1. Planilha do Google
-1. Crie uma planilha nova no Google Sheets.
+1. Crie uma planilha no Google Sheets.
 2. Abra **Extensões → Apps Script**, apague o conteúdo e cole o arquivo `apps-script/Code.gs`.
-3. Em **Configurações do projeto (⚙) → Propriedades do script**, adicione `SECRET` com uma senha longa e aleatória.
-4. Clique em **Implantar → Nova implantação → Tipo: App da Web**.
+3. No topo do código, preencha `SECRET` com uma senha longa e aleatória. Se o script não estiver dentro da planilha, preencha também `SPREADSHEET_ID`.
+4. Selecione a função `configurar` e clique em **Executar** para autorizar e criar as abas.
+5. Clique em **Implantar → Nova implantação → Tipo: App da Web**.
    - Executar como: **Eu**
    - Quem pode acessar: **Qualquer pessoa**
-5. Autorize e copie a URL que termina em `/exec`.
+6. Autorize e copie a URL que termina em `/exec`.
 
 Se você alterar o script depois, use **Gerenciar implantações → Editar → Nova versão** para manter a mesma URL.
 
@@ -56,7 +57,7 @@ Depois, em **Site configuration → Environment variables**, cadastre:
 Depois de cadastrar as variáveis, faça um novo deploy.
 
 ### 3. Pixel no navegador
-Em `public/config.js`, preencha `metaPixelId` com o mesmo ID. O ID é público. O token **nunca** vai nesse arquivo.
+Em `public/config.js`, o `metaPixelId` já está preenchido. Ele precisa ser igual a `META_PIXEL_ID` no Netlify. O ID é público. O token **nunca** vai nesse arquivo.
 
 ### 4. Testar
 - Abra o site com `?demo=1` para testar o visual sem gravar nada. Para forçar um estado, acrescente `&preview=open` ou `&preview=closed`.

@@ -1,19 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
-  <!-- Emblema provisório (sol + ondas). Substitua por assets/logo.png oficial se preferir. -->
-  <circle cx="100" cy="100" r="96" fill="#F4ECDD"/>
-  <g stroke="#24527E" stroke-width="7" stroke-linecap="round">
-    <line x1="100" y1="22" x2="100" y2="50"/>
-    <line x1="61" y1="32" x2="74" y2="56"/>
-    <line x1="139" y1="32" x2="126" y2="56"/>
-    <line x1="32" y1="60" x2="56" y2="74"/>
-    <line x1="168" y1="60" x2="144" y2="74"/>
-    <line x1="20" y1="98" x2="46" y2="98"/>
-    <line x1="180" y1="98" x2="154" y2="98"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs><clipPath id="c"><circle cx="100" cy="100" r="92"/></clipPath></defs>
+  <circle cx="100" cy="100" r="98" fill="#FBEFE2"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#1E4C6B" stroke-width="3"/>
+  <g clip-path="url(#c)" fill="#1E4C6B">
+    <path d="M56.1 101.5 Q32.9 93.4 14.5 94.5 A86 86 0 0 1 20.3 71.7 Q38.9 93.4 57.1 94.0Z"/><path d="M58.6 89.2 Q38.5 75.8 20.7 70.8 A86 86 0 0 1 32.6 50.6 Q44.5 75.8 61.7 82.4Z"/><path d="M64.4 78.1 Q48.8 60.4 33.2 49.8 A86 86 0 0 1 50.4 33.8 Q54.8 60.4 69.3 72.4Z"/><path d="M73.1 69.2 Q63.0 48.6 51.2 33.2 A86 86 0 0 1 72.2 22.6 Q69.0 48.6 79.5 65.1Z"/><path d="M84.0 63.0 Q80.0 41.3 73.1 22.3 A86 86 0 0 1 96.2 18.1 Q86.0 41.3 91.3 60.9Z"/><path d="M96.2 60.2 Q98.4 39.0 97.2 18.0 A86 86 0 0 1 120.6 20.5 Q104.4 39.0 103.8 60.2Z"/><path d="M108.7 60.9 Q116.6 42.0 121.5 20.7 A86 86 0 0 1 143.3 29.7 Q122.6 42.0 116.0 63.0Z"/><path d="M120.5 65.1 Q133.3 50.1 144.1 30.2 A86 86 0 0 1 162.5 44.9 Q139.3 50.1 126.9 69.2Z"/><path d="M130.7 72.4 Q147.0 62.5 163.1 45.6 A86 86 0 0 1 176.6 64.9 Q153.0 62.5 135.6 78.1Z"/><path d="M138.3 82.4 Q156.7 78.2 177.0 65.8 A86 86 0 0 1 184.5 88.0 Q162.7 78.2 141.4 89.2Z"/><path d="M142.9 94.0 Q161.5 96.1 184.7 89.0 A86 86 0 0 1 185.6 112.5 Q167.5 96.1 143.9 101.5Z"/>
+    <path d="M62 104a38 38 0 0 1 76 0Z"/>
   </g>
-  <path d="M58 104a42 42 0 0 1 84 0Z" fill="#24527E"/>
-  <g stroke="#24527E" stroke-width="8" stroke-linecap="round" fill="none">
-    <path d="M30 122c14-10 28-10 42 0s28 10 42 0 28-10 42 0 14 6 14 6"/>
-    <path d="M38 144c12-9 24-9 36 0s24 9 36 0 24-9 36 0"/>
-    <path d="M56 166c10-7 20-7 30 0s20 7 30 0 20-7 30 0"/>
+  <g clip-path="url(#c)" fill="none" stroke="#1E4C6B" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="9" d="M8 134c14-16 36-22 52-12 10 6 10 20 0 22-7 1-11-5-7-10"/>
+    <path stroke-width="9" d="M60 144c18 4 30-10 46-18 20-10 44-6 58 8 8 8 18 10 30 6"/>
+    <path stroke-width="9" d="M100 152c10-10 26-10 34 0 6 8 0 18-8 16-6-1-7-8-3-11"/>
+    <path stroke-width="8" d="M6 160c14-10 30-12 44-4s26 10 40 2 30-12 46-4 28 10 44 2 16-6 20-6"/>
+    <path stroke-width="8" d="M20 182c12-8 26-8 38-2s24 8 36 2 26-10 40-2 26 8 40 0"/>
   </g>
 </svg>

@@ -7,8 +7,12 @@
  *   - "Quinta DD-MM-AAAA" → uma aba por evento (para a portaria)
  *   - "Clientes"        → base de clientes única por WhatsApp (histórico de listas)
  *
- * Configuração: Projeto → Configurações → Propriedades do script → SECRET = (mesmo valor de SHEETS_SECRET no Netlify)
+ * Configuração: preencha SPREADSHEET_ID e SECRET abaixo (ou use Propriedades do script).
+ * SECRET deve ser igual a SHEETS_SECRET no Netlify.
  */
+
+var SPREADSHEET_ID = ''; // vazio = planilha à qual o script está vinculado
+var SECRET = '';         // ou Propriedade do script "SECRET"
 
 var TZ = 'America/Sao_Paulo';
 var ABA_LISTA = 'Lista (todas)';
@@ -20,7 +24,20 @@ var CAB_CLIENTES = ['WhatsApp', 'Nome', 'Instagram', 'Primeiro cadastro', 'Últi
   'Quintas', 'Como titular', 'Como acompanhante', 'Origem (1º utm_source)'];
 
 function segredo_() {
-  return PropertiesService.getScriptProperties().getProperty('SECRET');
+  return PropertiesService.getScriptProperties().getProperty('SECRET') || SECRET;
+}
+
+function planilha_() {
+  return SPREADSHEET_ID ? SpreadsheetApp.openById(SPREADSHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+}
+
+/** Rode uma vez no editor para autorizar e criar as abas. */
+function configurar() {
+  var ss = planilha_();
+  garantirAba_(ss, ABA_LISTA, CAB_LISTA);
+  garantirAba_(ss, ABA_CLIENTES, CAB_CLIENTES);
+  ss.setSpreadsheetTimeZone(TZ);
+  Logger.log('Pronto: ' + ss.getUrl());
 }
 
 function saida_(obj) {
@@ -57,7 +74,7 @@ function adicionar_(d) {
   var lock = LockService.getScriptLock();
   lock.waitLock(25000);
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ss = planilha_();
     var aba = garantirAba_(ss, ABA_LISTA, CAB_LISTA, ['A:A', 'C:C']);
     var agora = Utilities.formatDate(new Date(), TZ, 'dd/MM/yyyy HH:mm:ss');
     var utm = d.utm || {};
@@ -87,7 +104,7 @@ function adicionar_(d) {
       return [d.dataEvento, p.nome, p.whatsapp, p.tipo, d.titular.nome, p.instagram, agora, d.grupo,
         utm.utm_source || '', utm.utm_medium || '', utm.utm_campaign || '', utm.utm_content || ''];
     });
-    aba.getRange(aba.getLastRow() + 1, 1, linhas.length, CAB_LISTA.length).setValues(linhas);
+    aba.getRange(aba.getLastRow() + 1, 1, linhas.length, CAB_LISTA.length).setNumberFormat('@').setValues(linhas);
 
     // Aba da quinta (portaria)
     var nomeAba = 'Quinta ' + d.dataEvento.split('-').reverse().join('-');
@@ -96,6 +113,7 @@ function adicionar_(d) {
     var linhasEv = pessoas.map(function (p, k) {
       return [inicio - 1 + k, p.nome, p.tipo, d.titular.nome, p.whatsapp, agora, false];
     });
+    ev.getRange(inicio, 1, linhasEv.length, 6).setNumberFormat('@');
     ev.getRange(inicio, 1, linhasEv.length, CAB_EVENTO.length).setValues(linhasEv);
     ev.getRange(inicio, 7, linhasEv.length, 1).insertCheckboxes();
 
@@ -122,7 +140,7 @@ function atualizarClientes_(ss, pessoas, d, agora) {
     if (i === undefined) {
       var nova = [p.whatsapp, p.nome, p.instagram, agora, agora, 1, quinta,
         p.tipo === 'Titular' ? 1 : 0, p.tipo === 'Titular' ? 0 : 1, (d.utm && d.utm.utm_source) || ''];
-      aba.appendRow(nova);
+      aba.getRange(dados.length + 2, 1, 1, CAB_CLIENTES.length).setNumberFormat('@').setValues([nova]);
       indice[p.whatsapp] = dados.length;
       dados.push(nova);
     } else {
@@ -153,7 +171,7 @@ function garantirAba_(ss, nome, cabecalho, colunasTexto) {
 /* ---------------- Leitura (painel) ---------------- */
 
 function linhasLista_() {
-  var aba = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA_LISTA);
+  var aba = planilha_().getSheetByName(ABA_LISTA);
   if (!aba || aba.getLastRow() < 2) return [];
   return aba.getRange(2, 1, aba.getLastRow() - 1, CAB_LISTA.length).getDisplayValues();
 }
@@ -177,7 +195,7 @@ function lista_(data) {
 }
 
 function clientes_() {
-  var aba = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA_CLIENTES);
+  var aba = planilha_().getSheetByName(ABA_CLIENTES);
   if (!aba || aba.getLastRow() < 2) return [];
   return aba.getRange(2, 1, aba.getLastRow() - 1, CAB_CLIENTES.length).getDisplayValues().map(function (r) {
     return { whatsapp: String(r[0]), nome: r[1], instagram: r[2], primeiro: String(r[3]), ultimo: String(r[4]),

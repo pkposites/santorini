@@ -4,7 +4,7 @@
  */
 window.SANTORINI_CONFIG = {
   // ID do Pixel da Meta (é público). Deixe "" para não carregar o pixel.
-  metaPixelId: "",
+  metaPixelId: "35334406829517813",
 
   // Máximo de acompanhantes por cadastro.
   maxAcompanhantes: 5,
